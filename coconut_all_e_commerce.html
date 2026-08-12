@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CocoAll - 100% Minyak Kelapa Asli</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js untuk Interaktiviti -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Google Fonts untuk Tema Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Alpine Logic Initialization -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('eCommerceApp', () => ({
+                mobileMenuOpen: false,
+                isCheckoutOpen: false,
+                isSuccessOpen: false,
+                quantity: 1,
+                selectedPackage: 1,
+                
+                prices: {
+                    1: 39.99,
+                    2: 75.00,
+                    3: 110.00
+                },
+                shipping: 8.00,
+
+                calculateTotal() {
+                    return (this.prices[this.selectedPackage] * this.quantity).toFixed(2);
+                },
+                calculateGrandTotal() {
+                    let sub = parseFloat(this.calculateTotal());
+                    let ship = this.selectedPackage === 3 ? 0 : this.shipping;
+                    return (sub + ship).toFixed(2);
+                },
+                openCheckout() {
+                    this.isCheckoutOpen = true;
+                },
+                submitOrder() {
+                    // Simulasi API call yang berjaya
+                    this.isCheckoutOpen = false;
+                    setTimeout(() => {
+                        this.isSuccessOpen = true;
+                    }, 500);
+                }
+            }));
+        });
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        /* Tema Natural & Eco-Wellness: Warna Bumi & Sage */
+                        sage: {
+                            50: '#f4f7f4',
+                            100: '#e3ebe3',
+                            200: '#c7d8c7',
+                            300: '#9dbf9d',
+                            400: '#719e71',
+                            500: '#528252',
+                            600: '#3e663e',
+                            700: '#345234',
+                            800: '#2c422c',
+                            900: '#253725',
+                        },
+                        earth: {
+                            50: '#faf7f2',
+                            100: '#f1eadd',
+                            200: '#e1d0bc',
+                            300: '#d0b296',
+                            400: '#bf9171',
+                            500: '#b27854',
+                            600: '#a36246',
+                            700: '#884e3a',
+                            800: '#6f4133',
+                            900: '#5a372c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles untuk Micro-animations dan Whitespace */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        [x-cloak] { display: none !important; }
+        
+        .arch-mask {
+            border-top-left-radius: 50%;
+            border-top-right-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-earth-50 text-sage-900 font-sans antialiased selection:bg-sage-200 selection:text-sage-900" 
+      x-data="eCommerceApp">
+
+    <!-- STICKY NAVIGATION -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md shadow-sm z-40 transition-all border-b border-earth-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20"> <!-- Dikecilkan dari h-28 kepada h-20 -->
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer py-2" @click="window.scrollTo(0,0)">
+                    <img src="coconutall.png" alt="Logo CocoAll" class="h-12 md:h-16 w-auto object-contain origin-left">
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#tentang" class="text-sm font-medium text-sage-700 hover:text-sage-500 transition">Tentang</a>
+                    <a href="#kelebihan" class="text-sm font-medium text-sage-700 hover:text-sage-500 transition">Kelebihan</a>
+                    <a href="#caraguna" class="text-sm font-medium text-sage-700 hover:text-sage-500 transition">Cara Guna</a>
+                    <a href="#faq" class="text-sm font-medium text-sage-700 hover:text-sage-500 transition">FAQ</a>
+                    <button @click="openCheckout()" class="bg-sage-700 hover:bg-sage-800 text-white px-7 py-2.5 rounded-full font-semibold text-sm transition shadow-lg shadow-sage-200/50 tracking-wide">
+                        BELI SEKARANG
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-sage-700 hover:text-sage-500 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenuOpen" x-collapse x-cloak class="md:hidden bg-earth-50 border-t border-earth-200">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#tentang" @click="mobileMenuOpen = false" class="block px-3 py-3 text-base font-medium text-sage-800 border-b border-earth-100/50">Tentang</a>
+                <a href="#kelebihan" @click="mobileMenuOpen = false" class="block px-3 py-3 text-base font-medium text-sage-800 border-b border-earth-100/50">Kelebihan</a>
+                <button @click="mobileMenuOpen = false; openCheckout()" class="mt-6 w-full bg-sage-700 text-white px-4 py-3.5 rounded-xl font-bold tracking-wide shadow-md">BELI SEKARANG</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="pt-40 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
+        <div class="flex-1 text-center lg:text-left z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-sage-100 text-sage-700 font-semibold tracking-widest text-xs uppercase mb-4 border border-sage-200">
+                Semulajadi untuk semua
+            </span>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-sage-900 leading-tight">
+                Minyak Kelapa Asli Untuk Kesihatan & Kecantikan
+            </h1>
+            <p class="mt-6 text-lg text-sage-600/90 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
+                CocoAll dihasilkan daripada 100% ekstrak kelapa dara semulajadi. Kaya dengan nutrien penting untuk mengekalkan kelembapan kulit dan menguatkan akar rambut.
+            </p>
+
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <button @click="document.getElementById('belisekarang').scrollIntoView()" class="bg-sage-700 hover:bg-sage-800 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 shadow-xl shadow-sage-200/50 tracking-wide">
+                    BELI SEKARANG
+                </button>
+                <a href="#tentang" class="bg-transparent border border-sage-300 text-sage-800 hover:border-sage-700 hover:bg-sage-50 px-8 py-4 rounded-full font-semibold text-lg transition text-center tracking-wide">
+                    Ketahui Lebih Lanjut
+                </a>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div class="mt-12 pt-8 border-t border-earth-200 flex flex-wrap items-center justify-center lg:justify-start gap-8 text-sm text-sage-600 font-medium">
+                <div class="flex items-center gap-2"><svg class="w-5 h-5 text-earth-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Pembayaran Selamat</div>
+                <div class="flex items-center gap-2"><svg class="w-5 h-5 text-earth-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Penghantaran Sarawak Sahaja</div>
+            </div>
+        </div>
+        
+        <div class="flex-1 relative w-full flex justify-center">
+            <!-- Organic shape background -->
+            <div class="absolute inset-0 bg-sage-200/40 rounded-full blur-3xl transform scale-90 -z-10"></div>
+            <div class="relative w-full max-w-sm">
+                <!-- Arch Masking for Premium feel -->
+                <div class="arch-mask bg-earth-100 p-2 shadow-2xl overflow-hidden border border-white">
+                     <img src="produk.jpg" alt="Produk CocoAll" class="w-full h-auto arch-mask object-cover rounded-b-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="tentang" class="py-24 bg-white border-y border-earth-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-sage-900">Apa Itu CocoAll?</h2>
+                <p class="mt-6 text-sage-600 max-w-2xl mx-auto font-light leading-relaxed text-lg">Dihasilkan melalui proses perahan sejuk (cold-pressed) yang teliti bagi mengekalkan keaslian dan profil nutrien semulajadi buah kelapa.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-earth-200 transform translate-x-4 translate-y-4 rounded-3xl -z-10"></div>
+                    <div class="rounded-3xl overflow-hidden shadow-lg border border-earth-100 bg-earth-50">
+                        <!-- Product visual placeholder -->
+                        <div class="aspect-[4/5] flex items-center justify-center p-8">
+                            <img src="produk2.jpg" alt="Tentang CocoAll" class="object-cover w-full h-full rounded-2xl">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-serif font-bold text-sage-900 mb-6">Mengekalkan Kelembapan Semulajadi</h3>
+                    <p class="text-sage-600/90 mb-8 leading-relaxed font-light text-lg">
+                        CocoAll dirumus khas sebagai pelembap luaran untuk kulit dan rutin penjagaan asas rambut. Ia sangat sesuai digunakan sebagai minyak urutan semulajadi atau penanggal solekan yang mesra kulit tanpa bahan kimia berbahaya.
+                    </p>
+                    <ul class="space-y-5">
+                        <li class="flex items-start bg-earth-50 p-4 rounded-2xl border border-earth-100">
+                            <div class="bg-white p-2 rounded-full shadow-sm mr-4 flex-shrink-0">
+                                <svg class="h-6 w-6 text-earth-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-sage-800 pt-1 font-medium">100% Bahan semulajadi tanpa sebarang pengawet tambahan.</span>
+                        </li>
+                        <li class="flex items-start bg-earth-50 p-4 rounded-2xl border border-earth-100">
+                            <div class="bg-white p-2 rounded-full shadow-sm mr-4 flex-shrink-0">
+                                <svg class="h-6 w-6 text-earth-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-sage-800 pt-1 font-medium">Kadar penyerapan pantas dan tidak meninggalkan rasa melekit pada kulit.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT BENEFITS -->
+    <section id="kelebihan" class="py-24 bg-sage-50/50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                 <span class="text-earth-600 font-semibold tracking-widest text-xs uppercase mb-3 block">Satu Minyak. Pelbagai Kelebihan.</span>
+                 <h2 class="text-3xl md:text-5xl font-serif font-bold text-sage-900">Anugerah Alam Untuk Anda</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Hair Benefits Card -->
+                <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-earth-100 hover:shadow-xl hover:border-sage-200 transition-all duration-300">
+                    <div class="flex items-center gap-5 mb-8">
+                        <div class="w-16 h-16 bg-sage-100 text-sage-700 rounded-full flex items-center justify-center border border-sage-200 flex-shrink-0">
+                            <!-- Leaf icon representing Hair / Botanical -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-sage-900">RAMBUT</h3>
+                            <p class="text-sage-600 text-xs font-bold tracking-widest uppercase mt-1">Menutrisi & Menguatkan</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Menutrisi kulit kepala & rambut secara mendalam</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Mengurangkan masalah rambut gugur & rapuh</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Memberikan kilauan & kelembutan semulajadi</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Membantu mengurangkan kelemumur & kulit kering</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Ideal untuk urutan minyak rambut & mask</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Skin Benefits Card -->
+                <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-earth-100 hover:shadow-xl hover:border-sage-200 transition-all duration-300">
+                    <div class="flex items-center gap-5 mb-8">
+                        <div class="w-16 h-16 bg-earth-100 text-earth-700 rounded-full flex items-center justify-center border border-earth-200 flex-shrink-0">
+                            <!-- Sparkle icon representing Skin / Glow -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-sage-900">KULIT</h3>
+                            <p class="text-earth-600 text-xs font-bold tracking-widest uppercase mt-1">Melembap & Berseri</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Melembapkan kulit secara mendalam</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Melegakan kulit kering, sensitif & kerengsaan</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Bertindak sebagai penanggal solekan semulajadi</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Membantu meningkatkan keanjalan & keserian kulit</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-earth-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-sage-700 font-medium">Sangat sesuai untuk urutan & penjagaan badan</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW TO USE -->
+    <section id="caraguna" class="py-24 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-5xl font-serif font-bold text-center text-sage-900 mb-16">Cara Menggunakan CocoAll</h2>
+            
+            <!-- Tempat Letak Gambar 1280x853 -->
+            <div class="w-full rounded-3xl overflow-hidden shadow-xl border border-earth-100 hover:shadow-2xl transition-all duration-500 bg-earth-50 relative group">
+                <img src="produk 3.jpg" alt="Cara Penggunaan CocoAll" class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT PURCHASE SECTION (Interactive Function) -->
+    <section id="belisekarang" class="py-24 bg-earth-100/50 relative border-y border-earth-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-sage-900/5 overflow-hidden flex flex-col md:flex-row border border-white">
+                <!-- Product Image -->
+                <div class="md:w-1/2 p-8 md:p-16 bg-sage-50/50 flex items-center justify-center border-b md:border-b-0 md:border-r border-earth-100">
+                    <div class="arch-mask bg-white p-2 shadow-xl">
+                        <img src="produk.jpg" alt="CocoAll" class="w-full max-w-sm arch-mask object-cover rounded-b-xl">
+                    </div>
+                </div>
+                
+                <!-- Purchase Options -->
+                <div class="md:w-1/2 p-8 md:p-12 lg:p-16">
+                    <span class="inline-block px-3 py-1 bg-sage-100 text-sage-800 text-[10px] font-bold tracking-widest uppercase rounded-sm mb-4 border border-sage-200">Dalam Stok</span>
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold text-sage-900 mb-8">CocoAll</h2>
+
+                    <div class="mb-10 border-b border-earth-100 pb-8">
+                        <div class="flex items-end gap-4 mb-2">
+                            <span class="text-4xl lg:text-5xl font-serif font-bold text-sage-800" x-text="'RM ' + calculateTotal()">RM 39.99</span>
+                            <span class="text-lg text-sage-400 line-through mb-1.5 font-light" x-show="selectedPackage === 1" x-text="'RM 50.00'"></span>
+                        </div>
+                        <p class="text-sage-500 text-sm font-light">Cukai disertakan. Kos penghantaran dikira semasa pembayaran.</p>
+                    </div>
+
+                    <!-- Package Selector -->
+                    <div class="mb-10 space-y-4">
+                        <label class="block text-xs font-semibold tracking-widest uppercase text-sage-600 mb-4">Pilih Pakej Anda</label>
+                        
+                        <!-- Package 1 Bottle -->
+                        <label @click="selectedPackage = 1" :class="{'border-sage-500 bg-sage-50 shadow-md': selectedPackage === 1, 'border-earth-200 hover:border-sage-300 bg-white': selectedPackage !== 1}" class="border-2 rounded-2xl p-5 cursor-pointer flex items-center transition-all duration-300">
+                            <div class="w-5 h-5 rounded-full border flex items-center justify-center mr-4" :class="{'border-sage-600': selectedPackage === 1, 'border-earth-300': selectedPackage !== 1}">
+                                <div class="w-2.5 h-2.5 rounded-full bg-sage-600 transition-transform duration-200" :class="{'scale-100': selectedPackage === 1, 'scale-0': selectedPackage !== 1}"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-sage-900 block text-lg">1 Botol (50ml)</span>
+                                <span class="text-sm text-sage-500 font-light">Sesuai untuk percubaan</span>
+                            </div>
+                            <span class="font-bold text-sage-800 text-lg">RM 39.99</span>
+                        </label>
+
+                        <!-- Package 2 Bottles -->
+                        <label @click="selectedPackage = 2" :class="{'border-sage-500 bg-sage-50 shadow-md': selectedPackage === 2, 'border-earth-200 hover:border-sage-300 bg-white': selectedPackage !== 2}" class="border-2 rounded-2xl p-5 cursor-pointer flex items-center transition-all duration-300 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-earth-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-widest">Popular</div>
+                            <div class="w-5 h-5 rounded-full border flex items-center justify-center mr-4" :class="{'border-sage-600': selectedPackage === 2, 'border-earth-300': selectedPackage !== 2}">
+                                <div class="w-2.5 h-2.5 rounded-full bg-sage-600 transition-transform duration-200" :class="{'scale-100': selectedPackage === 2, 'scale-0': selectedPackage !== 2}"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-sage-900 block text-lg">2 Botol (50ml)</span>
+                                <span class="text-sm text-sage-500 font-light">Lebih isipadu & penjimatan</span>
+                            </div>
+                            <span class="font-bold text-sage-800 text-lg">RM 75.00</span>
+                        </label>
+
+                        <!-- Package 3 Bottles -->
+                        <label @click="selectedPackage = 3" :class="{'border-sage-500 bg-sage-50 shadow-md': selectedPackage === 3, 'border-earth-200 hover:border-sage-300 bg-white': selectedPackage !== 3}" class="border-2 rounded-2xl p-5 cursor-pointer flex items-center transition-all duration-300 relative overflow-hidden">
+                             <div class="absolute top-0 right-0 bg-sage-700 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-widest">Percuma Pos</div>
+                            <div class="w-5 h-5 rounded-full border flex items-center justify-center mr-4" :class="{'border-sage-600': selectedPackage === 3, 'border-earth-300': selectedPackage !== 3}">
+                                <div class="w-2.5 h-2.5 rounded-full bg-sage-600 transition-transform duration-200" :class="{'scale-100': selectedPackage === 3, 'scale-0': selectedPackage !== 3}"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-sage-900 block text-lg">3 Botol (50ml)</span>
+                                <span class="text-sm text-sage-500 font-light">Penjimatan Berganda + Free Pos</span>
+                            </div>
+                            <span class="font-bold text-sage-800 text-lg">RM 110.00</span>
+                        </label>
+                    </div>
+
+                    <!-- Quantity & Button -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex items-center border border-earth-300 rounded-xl bg-white w-full sm:w-1/3 justify-between p-2">
+                            <button type="button" @click="if(quantity > 1) quantity--" class="w-10 h-10 flex items-center justify-center text-sage-500 hover:text-sage-900 hover:bg-earth-50 rounded-lg transition-colors font-medium text-xl">-</button>
+                            <span class="font-bold text-sage-900 text-lg" x-text="quantity">1</span>
+                            <button type="button" @click="quantity++" class="w-10 h-10 flex items-center justify-center text-sage-500 hover:text-sage-900 hover:bg-earth-50 rounded-lg transition-colors font-medium text-xl">+</button>
+                        </div>
+                        <button @click="openCheckout()" class="w-full sm:w-2/3 bg-sage-700 hover:bg-sage-800 text-white rounded-xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 py-4">
+                            BUAT PESANAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-24 bg-sage-50/30 border-t border-earth-100">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-center text-sage-900 mb-12">Soalan Lazim (FAQ)</h2>
+            
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div x-data="{ open: false }" class="bg-white border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button @click="open = !open" class="flex justify-between items-center w-full p-6 text-left focus:outline-none">
+                        <span class="font-semibold text-sage-900 tracking-wide text-sm">Dimanakah penghantaran diambil?</span>
+                        <svg class="w-5 h-5 text-earth-600 transform transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-collapse>
+                        <div class="p-6 pt-0 text-sage-600 font-light text-sm border-t border-earth-50 mt-2 leading-relaxed">
+                            Buat masa ini, perkhidmatan penghantaran kami adalah terhad di dalam negeri Sarawak sahaja.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div x-data="{ open: false }" class="bg-white border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button @click="open = !open" class="flex justify-between items-center w-full p-6 text-left focus:outline-none">
+                        <span class="font-semibold text-sage-900 tracking-wide text-sm">Adakah produk ini sesuai untuk semua jenis kulit?</span>
+                        <svg class="w-5 h-5 text-earth-600 transform transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-collapse>
+                        <div class="p-6 pt-0 text-sage-600 font-light text-sm border-t border-earth-50 mt-2 leading-relaxed">
+                            CocoAll diperbuat daripada bahan-bahan semulajadi dan secara amnya sesuai untuk semua. Walau bagaimanapun, kami menasihatkan anda untuk membuat ujian tampalan (patch test) terlebih dahulu jika anda mempunyai kulit yang sangat sensitif.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 3 -->
+                <div x-data="{ open: false }" class="bg-white border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button @click="open = !open" class="flex justify-between items-center w-full p-6 text-left focus:outline-none">
+                        <span class="font-semibold text-sage-900 tracking-wide text-sm">Bila masa yang sesuai untuk menggunakan produk tersebut?</span>
+                        <svg class="w-5 h-5 text-earth-600 transform transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-collapse>
+                        <div class="p-6 pt-0 text-sage-600 font-light text-sm border-t border-earth-50 mt-2 leading-relaxed">
+                            Masa yang paling ideal adalah sejurus selepas mandi ketika kulit dan rambut masih sedikit lembap bagi membantu mengunci kelembapan dengan lebih berkesan. Ia juga sangat sesuai dijadikan rutin penjagaan malam sebelum anda tidur.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 4 -->
+                <div x-data="{ open: false }" class="bg-white border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button @click="open = !open" class="flex justify-between items-center w-full p-6 text-left focus:outline-none">
+                        <span class="font-semibold text-sage-900 tracking-wide text-sm">Berapa lamakah jangka hayat simpanan produk ini?</span>
+                        <svg class="w-5 h-5 text-earth-600 transform transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-collapse>
+                        <div class="p-6 pt-0 text-sage-600 font-light text-sm border-t border-earth-50 mt-2 leading-relaxed">
+                            Tiada tarikh luput. Kami menasihatkan agar botol disimpan pada suhu bilik dan dijauhkan daripada pancaran cahaya matahari secara langsung. Jangan risau jika minyak membeku ketika suhu persekitaran sejuk, ia adalah sifat semulajadi kelapa. Hanya letakkan botol di dalam air suam seketika sebelum digunakan.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 5 -->
+                <div x-data="{ open: false }" class="bg-white border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
+                    <button @click="open = !open" class="flex justify-between items-center w-full p-6 text-left focus:outline-none">
+                        <span class="font-semibold text-sage-900 tracking-wide text-sm">Adakah selamat untuk ibu mengandung, menyusu dan untuk semua peringkat umur?</span>
+                        <svg class="w-5 h-5 text-earth-600 transform transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-collapse>
+                        <div class="p-6 pt-0 text-sage-600 font-light text-sm border-t border-earth-50 mt-2 leading-relaxed">
+                            Ya, memandangkan CocoAll adalah 100% bahan semulajadi tulen tanpa sebarang bahan kimia atau pengawet tambahan, ia sangat selamat untuk kegunaan luaran bagi ibu mengandung, ibu yang menyusu, kanak-kanak, serta sesuai untuk semua peringkat umur.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-sage-900 text-sage-300 py-16 border-t border-sage-950">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-8 md:mb-0 flex flex-col items-center md:items-start">
+                <img src="coconutall.png" alt="Logo CocoAll" class="h-32 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all mb-4">
+                <p class="text-xs font-light tracking-widest uppercase text-sage-500">Semulajadi Untuk Semua.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 text-xs font-medium tracking-widest uppercase text-sage-400">
+                <a href="#" class="hover:text-white transition">Terma & Syarat</a>
+                <a href="#" class="hover:text-white transition">Dasar Privasi</a>
+                <a href="#" class="hover:text-white transition">Hubungi Kami</a>
+            </div>
+        </div>
+        <div class="text-center mt-12 text-xs font-light text-sage-600/50">
+            &copy; 2026 CocoAll. Hak Cipta Terpelihara.
+        </div>
+    </footer>
+
+    <!-- STICKY BOTTOM CTA (MOBILE ONLY) -->
+    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white p-4 shadow-[0_-10px_30px_-5px_rgba(0,0,0,0.1)] z-30 border-t border-earth-100">
+        <button @click="openCheckout()" class="w-full bg-sage-700 text-white rounded-xl py-4 font-bold text-sm uppercase tracking-widest flex justify-center items-center gap-2 shadow-lg">
+            BELI SEKARANG — RM <span x-text="calculateTotal()"></span>
+        </button>
+    </div>
+
+    <!-- FLOATING WHATSAPP -->
+    <a href="https://wa.me/60123456789" target="_blank" class="fixed bottom-24 md:bottom-8 right-6 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-40 border-2 border-white">
+        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.102.824z"/></svg>
+    </a>
+
+    <!-- CHECKOUT DRAWER / MODAL -->
+    <div x-show="isCheckoutOpen" x-cloak class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <!-- Overlay -->
+        <div x-show="isCheckoutOpen" x-transition.opacity class="fixed inset-0 bg-sage-900/60 backdrop-blur-sm transition-opacity" @click="isCheckoutOpen = false"></div>
+      
+        <div class="fixed inset-0 overflow-hidden">
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                    <!-- Drawer Panel -->
+                    <div x-show="isCheckoutOpen" 
+                         x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500" 
+                         x-transition:enter-start="translate-x-full" 
+                         x-transition:enter-end="translate-x-0" 
+                         x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500" 
+                         x-transition:leave-start="translate-x-0" 
+                         x-transition:leave-end="translate-x-full" 
+                         class="pointer-events-auto w-screen max-w-md">
+                         
+                        <div class="flex h-full flex-col overflow-y-scroll bg-earth-50 shadow-2xl hide-scrollbar">
+                            <div class="flex-1 overflow-y-auto px-6 py-8">
+                                <div class="flex items-start justify-between mb-8">
+                                    <h2 class="text-sm font-semibold tracking-widest uppercase text-sage-900" id="slide-over-title">Lengkapkan Pesanan Anda</h2>
+                                    <button type="button" class="relative -m-2 p-2 text-sage-400 hover:text-sage-600 transition-colors" @click="isCheckoutOpen = false">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                </div>
+                                
+                                <div class="bg-white rounded-2xl p-5 border border-earth-200 mb-8 flex gap-5 items-center shadow-sm">
+                                    <img src="produk.jpg" alt="Produk" class="w-16 h-16 rounded-xl object-cover border border-earth-100">
+                                    <div>
+                                        <h3 class="text-sm font-bold text-sage-900 font-serif">CocoAll</h3>
+                                        <p class="text-xs text-sage-500 font-light mt-1">Pakej <span x-text="selectedPackage"></span> <span x-text="selectedPackage === 1 ? '(1x 50ml)' : (selectedPackage === 2 ? '(2x 50ml)' : '(3x 50ml)')"></span> x <span x-text="quantity"></span></p>
+                                        <p class="text-sm font-bold text-sage-800 mt-2">RM <span x-text="calculateTotal()"></span></p>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Info Form -->
+                                <form @submit.prevent="submitOrder()" id="checkoutForm">
+                                    <div class="space-y-5">
+                                        <h3 class="font-semibold text-sage-900 text-xs uppercase tracking-widest border-b border-earth-200 pb-2">Maklumat Penghantaran</h3>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Nama Penuh <span class="text-red-500">*</span></label>
+                                            <input type="text" required class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light" placeholder="Nama anda">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Nombor Telefon <span class="text-red-500">*</span></label>
+                                            <input type="tel" required class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light" placeholder="0123456789">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">E-mel (Pilihan)</label>
+                                            <input type="email" class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light" placeholder="ali@email.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Alamat Penuh <span class="text-red-500">*</span></label>
+                                            <textarea required rows="3" class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light" placeholder="No Rumah, Jalan, Taman..."></textarea>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Poskod <span class="text-red-500">*</span></label>
+                                                <input type="text" required class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Bandar <span class="text-red-500">*</span></label>
+                                                <input type="text" required class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-white shadow-sm font-light">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-1.5 uppercase tracking-wide">Negeri <span class="text-red-500">*</span></label>
+                                            <select required class="w-full rounded-xl border-earth-300 border p-3.5 text-sm focus:ring-sage-500 focus:border-sage-500 bg-earth-100 shadow-sm font-bold text-sage-900" disabled>
+                                                <!-- Terhad kepada Sarawak mengikut spesifikasi -->
+                                                <option value="Sarawak" selected>Sarawak (Sahaja)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-semibold text-sage-600 mb-3 mt-6 uppercase tracking-wide border-b border-earth-200 pb-2">Kaedah Pembayaran</label>
+                                            <div class="space-y-3">
+                                                <label class="flex items-center p-4 border border-earth-200 rounded-xl cursor-pointer hover:bg-earth-50 hover:border-sage-300 transition-colors bg-white shadow-sm">
+                                                    <input type="radio" name="payment" value="fpx" checked class="text-sage-600 focus:ring-sage-500 w-4 h-4">
+                                                    <span class="ml-4 text-sm text-sage-900 font-bold">FPX / Online Banking</span>
+                                                </label>
+                                                <label class="flex items-center p-4 border border-earth-200 rounded-xl cursor-pointer hover:bg-earth-50 hover:border-sage-300 transition-colors bg-white shadow-sm">
+                                                    <input type="radio" name="payment" value="cod" class="text-sage-600 focus:ring-sage-500 w-4 h-4">
+                                                    <span class="ml-4 text-sm text-sage-900 font-bold">Barang Sampai Baru Bayar (COD)</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+      
+                            <div class="border-t border-earth-200 px-6 py-8 bg-earth-100/50">
+                                <div class="space-y-3 text-sm text-sage-600 mb-6 font-light">
+                                    <div class="flex justify-between">
+                                        <p>Subtotal</p>
+                                        <p class="font-bold text-sage-900">RM <span x-text="calculateTotal()"></span></p>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <p>Kos Penghantaran</p>
+                                        <p class="font-bold text-sage-900" x-text="selectedPackage === 3 ? 'PERCUMA' : 'RM 8.00'"></p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-end mb-8 border-t border-earth-200 pt-6">
+                                    <p class="text-sm font-bold text-sage-900 uppercase tracking-widest">Jumlah Keseluruhan</p>
+                                    <p class="text-sage-700 text-2xl font-serif font-bold">RM <span x-text="calculateGrandTotal()"></span></p>
+                                </div>
+                                
+                                <button type="submit" form="checkoutForm" class="flex w-full items-center justify-center rounded-xl bg-sage-700 px-6 py-4 text-sm font-bold tracking-widest uppercase text-white shadow-lg hover:shadow-xl hover:bg-sage-800 transition-all">
+                                    Sahkan & Bayar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER SUCCESS MODAL -->
+    <div x-show="isSuccessOpen" x-cloak class="relative z-[60]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-sage-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-[2rem] bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg p-8 md:p-10 border border-earth-100">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sage-50 mb-8 border border-sage-200 shadow-sm">
+                        <svg class="h-10 w-10 text-sage-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-3xl font-serif font-bold text-sage-900 mb-3">Terima Kasih!</h3>
+                        <p class="text-sage-600 font-light text-sm">Pesanan anda telah berjaya diterima dan sedang diproses.</p>
+                    </div>
+                    <div class="mt-10 border border-earth-200 rounded-2xl p-6 bg-earth-50 text-sm space-y-4">
+                        <div class="flex justify-between border-b border-earth-200/50 pb-3"><span class="text-sage-500 uppercase tracking-widest text-[10px] font-bold">ID Pesanan</span> <strong class="text-sage-900 font-mono">ML-2026-00001</strong></div>
+                        <div class="flex justify-between border-b border-earth-200/50 pb-3"><span class="text-sage-500 uppercase tracking-widest text-[10px] font-bold">Status Pembayaran</span> <span class="bg-earth-200 text-earth-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">Menunggu</span></div>
+                        <div class="flex justify-between border-b border-earth-200/50 pb-3"><span class="text-sage-500 uppercase tracking-widest text-[10px] font-bold">Jumlah Bayaran</span> <strong class="text-sage-900">RM <span x-text="calculateGrandTotal()"></span></strong></div>
+                        <div class="flex justify-between"><span class="text-sage-500 uppercase tracking-widest text-[10px] font-bold">Produk</span> <strong class="text-sage-900">Pakej <span x-text="selectedPackage"></span> <span x-text="selectedPackage === 1 ? '(1x 50ml)' : (selectedPackage === 2 ? '(2x 50ml)' : '(3x 50ml)')"></span> (x<span x-text="quantity"></span>)</strong></div>
+                    </div>
+                    <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                        <button @click="isSuccessOpen = false" class="w-full justify-center rounded-xl border-2 border-earth-200 bg-white px-4 py-3.5 text-sm font-bold tracking-widest uppercase text-sage-700 shadow-sm hover:bg-earth-50 hover:border-earth-300 transition-colors">Tutup</button>
+                        <a href="#" class="flex w-full justify-center rounded-xl bg-sage-700 px-4 py-3.5 text-sm font-bold tracking-widest uppercase text-white shadow-lg hover:shadow-xl hover:bg-sage-800 transition-all">Semak Status</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
